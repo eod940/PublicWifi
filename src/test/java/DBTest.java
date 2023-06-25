@@ -137,17 +137,25 @@ public class DBTest {
                     for (int i = 0; i < wifi_info.size(); i++) {
                         JsonObject object = wifi_info.get(i).getAsJsonObject();
                         System.out.println("번호 : " + object.get("X_SWIFI_MGR_NO"));
-//                        System.out.println("위치 : " + object.get("X_SWIFI_WRDOFC"));
+                        System.out.println("startNum = " + startNum);
+                        System.out.println("lastNum = " + lastNum);
+                        System.out.println("위치 : " + (lastNum - startNum));
+                        System.out.println("wifi.size(): " + wifi_info.size());
                         System.out.println("------------------------");
+                    }
+
+                    if (lastNum == list_total_count) {
+                        isWorking = false;
                     }
 
                     startNum = lastNum;
                     lastNum = startNum + 999;
+                    if (lastNum > list_total_count)
+                        lastNum = list_total_count;
 
                     System.out.println("lastNum = " + lastNum);
                     System.out.println("list_total_count = " + list_total_count);
-                    if (lastNum >= list_total_count)
-                        isWorking = false;
+
                 }
             } else {
                 System.err.println("Error Occurred");
