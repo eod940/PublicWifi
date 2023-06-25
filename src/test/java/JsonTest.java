@@ -86,9 +86,10 @@ public class JsonTest {
 
                 for (int i = 0; i < wifi_info.size(); i++) {
                     JsonObject object = wifi_info.get(i).getAsJsonObject();
-                    System.out.println("번호 : " + object.get("X_SWIFI_MGR_NO"));
-                    System.out.println("위치 : " + object.get("X_SWIFI_WRDOFC"));
-                    System.out.println("i : " + i);
+//                    System.out.println("번호 : " + object.get("X_SWIFI_MGR_NO"));
+//                    System.out.println("위치 : " + object.get("X_SWIFI_WRDOFC"));
+//                    System.out.println("i : " + i);
+                    System.out.println("object = " + object);
                     System.out.println("------------------------");
                 }
             }
