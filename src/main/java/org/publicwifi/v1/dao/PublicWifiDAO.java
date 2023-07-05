@@ -1,17 +1,18 @@
-import org.junit.Test;
+package org.publicwifi.v1.dao;
 
 import java.sql.*;
 
-public class DMLTest {
+public class PublicWifiDAO {
+    private static final String dbUrl = "jdbc:sqlite:./publicWifi.sqlite3";
 
-    @Test
-    public void insertData() throws ClassNotFoundException {
+    public void createPublicWifi() throws ClassNotFoundException {
         Connection connection = null;
         Class.forName("org.sqlite.JDBC");
+
         try
         {
             // create a database connection
-            connection = DriverManager.getConnection("jdbc:sqlite:./publicWifi.sqlite3");
+            connection = DriverManager.getConnection(dbUrl);
             Statement statement = connection.createStatement();
             statement.setQueryTimeout(30);  // set timeout to 30 sec.
 
@@ -33,16 +34,7 @@ public class DMLTest {
                     "    LAT REAL,\n" +
                     "    LNT REAL,\n" +
                     "    WORK_DTTM TEXT)");
-//            statement.executeUpdate("delete from public_wifi");
-            statement.executeUpdate("insert into public_wifi values('leo', 'dfjakdfj', 'df', 'a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 37.4, 123.4, 'm')");
-            ResultSet rs = statement.executeQuery("select * from public_wifi");
-            while(rs.next())
-            {
-                // read the result set
-                System.out.println("name = " + rs.getString("X_SWIFI_MGR_NO"));
-                System.out.println("id = " + rs.getString("X_SWIFI_WRDOFC"));
-            }
-            statement.executeUpdate("delete from public_wifi");
+
         }
         catch(SQLException e)
         {
@@ -65,9 +57,7 @@ public class DMLTest {
         }
     }
 
-    @Test
     public void insertPublicWifi() throws ClassNotFoundException {
-        String dbUrl = "jdbc:sqlite:./publicWifi.sqlite3";
         Connection connection = null;
         Class.forName("org.sqlite.JDBC");
 
@@ -78,8 +68,11 @@ public class DMLTest {
             Statement statement = connection.createStatement();
             statement.setQueryTimeout(30);  // set timeout to 30 sec.
 
-            statement.executeUpdate("delete from public_wifi");
-            statement.executeUpdate("insert into public_wifi values(1, 'leo', 'dfjakdfj', 'df', 'a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 37.4, 123.4, 'm')");
+            statement.executeUpdate("");
+            statement.executeUpdate("");
+
+//            statement.executeUpdate("delete from public_wifi");
+            statement.executeUpdate("insert into public_wifi values('leo', 'dfjakdfj', 'df', 'a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 37.4, 123.4, 'm')");
             ResultSet rs = statement.executeQuery("select * from public_wifi");
             while(rs.next())
             {
@@ -110,6 +103,4 @@ public class DMLTest {
             }
         }
     }
-
-
 }
