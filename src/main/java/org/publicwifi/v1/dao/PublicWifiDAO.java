@@ -1,5 +1,7 @@
 package org.publicwifi.v1.dao;
 
+import org.publicwifi.v1.dto.PublicWifiDTO;
+
 import java.sql.*;
 
 public class PublicWifiDAO {
@@ -14,6 +16,8 @@ public class PublicWifiDAO {
             // create a database connection
             connection = DriverManager.getConnection(dbUrl);
             Statement statement = connection.createStatement();
+            PreparedStatement psmt = connection.prepareStatement("insert into public_wifi values(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
+
             statement.setQueryTimeout(30);  // set timeout to 30 sec.
 
             statement.executeUpdate("drop table if exists public_wifi");
@@ -57,7 +61,7 @@ public class PublicWifiDAO {
         }
     }
 
-    public void insertPublicWifi() throws ClassNotFoundException {
+    public void insertPublicWifi(PublicWifiDTO dto) throws ClassNotFoundException {
         Connection connection = null;
         Class.forName("org.sqlite.JDBC");
 
@@ -66,22 +70,35 @@ public class PublicWifiDAO {
             // create a database connection
             connection = DriverManager.getConnection(dbUrl);
             Statement statement = connection.createStatement();
+            PreparedStatement psmt = connection.prepareStatement("insert into public_wifi values(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
             statement.setQueryTimeout(30);  // set timeout to 30 sec.
 
-            statement.executeUpdate("");
-            statement.executeUpdate("");
+            psmt.setString(1, dto.getX_SWIFI_MGR_NO());
+            psmt.setString(2, dto.getX_SWIFI_WRDOFC());
+            psmt.setString(3, dto.getX_SWIFI_MAIN_NM());
+            psmt.setString(4, dto.getX_SWIFI_ADRES1());
+            psmt.setString(5, dto.getX_SWIFI_ADRES2());
+            psmt.setString(6, dto.getX_SWIFI_INSTL_FLOOR());
+            psmt.setString(7, dto.getX_SWIFI_INSTL_TY());
+            psmt.setString(8, dto.getX_SWIFI_INSTL_MBY());
+            psmt.setString(9, dto.getX_SWIFI_SVC_SE());
+            psmt.setString(10, dto.getX_SWIFI_CMCWR());
+            psmt.setString(11, dto.getX_SWIFI_CNSTC_YEAR());
+            psmt.setString(12, dto.getX_SWIFI_INOUT_DOOR());
+            psmt.setString(13, dto.getX_SWIFI_REMARS3());
+            psmt.setDouble(14, dto.getLAT());
+            psmt.setDouble(15, dto.getLNT());
+            psmt.setString(16, dto.getWORK_DTTM());
 
-//            statement.executeUpdate("delete from public_wifi");
-            statement.executeUpdate("insert into public_wifi values('leo', 'dfjakdfj', 'df', 'a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 37.4, 123.4, 'm')");
             ResultSet rs = statement.executeQuery("select * from public_wifi");
             while(rs.next())
             {
                 // read the result set
-                System.out.println("name = " + rs.getString("X_SWIFI_MGR_NO"));
-                System.out.println("id = " + rs.getString("X_SWIFI_WRDOFC"));
+                System.out.println("id = " + rs.getString("X_SWIFI_MGR_NO"));
                 System.out.println("lat = " + rs.getString("LAT"));
                 System.out.println("lnt = " + rs.getString("LNT"));
             }
+            statement.executeUpdate("delete from public_wifi");
         }
         catch(SQLException e)
         {

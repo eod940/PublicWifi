@@ -20,7 +20,7 @@
       <a href="#">즐겨찾기 그룹 관리</a> |
     </nav>
     <div>
-      <form action="${pageContext.request.contextPath}/param" method="get">
+      <form method="get">
         <label for="lat">LAT:</label>
         <input name="lat" type="text" id="lat" value="0.0">
 

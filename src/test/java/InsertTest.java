@@ -1,4 +1,3 @@
-
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
@@ -7,102 +6,14 @@ import okhttp3.Request;
 import okhttp3.Response;
 import okhttp3.ResponseBody;
 import org.junit.Test;
+import org.publicwifi.v1.dao.PublicWifiDAO;
 import org.publicwifi.v1.dto.PublicWifiDTO;
 
 import java.io.IOException;
 import java.sql.*;
 
-public class DBTest {
+public class InsertTest {
 
-    @Test
-    public void sqliteTest() throws ClassNotFoundException {
-        Connection connection = null;
-        Class.forName("org.sqlite.JDBC");
-        try
-        {
-            // create a database connection
-            connection = DriverManager.getConnection("jdbc:sqlite:/Users/leo/github/Project/PublicWifi/publicWifi.sqlite3");
-            Statement statement = connection.createStatement();
-            statement.setQueryTimeout(30);  // set timeout to 30 sec.
-
-            statement.executeUpdate("drop table if exists person");
-            statement.executeUpdate("create table person (id integer, name string)");
-            statement.executeUpdate("insert into person values(1, 'leo')");
-            statement.executeUpdate("insert into person values(2, 'yui')");
-            ResultSet rs = statement.executeQuery("select * from person");
-            while(rs.next())
-            {
-                // read the result set
-                System.out.println("name = " + rs.getString("name"));
-                System.out.println("id = " + rs.getInt("id"));
-            }
-            statement.executeUpdate("drop table person");
-        }
-        catch(SQLException e)
-        {
-            // if the error message is "out of memory",
-            // it probably means no database file is found
-            System.err.println(e.getMessage());
-        }
-        finally
-        {
-            try
-            {
-                if(connection != null)
-                    connection.close();
-            }
-            catch(SQLException e)
-            {
-                // connection close failed.
-                System.err.println(e.getMessage());
-            }
-        }
-    }
-
-    public void insertTest(PublicWifiDTO publicWifiDTO) throws ClassNotFoundException {
-        Connection connection = null;
-        Class.forName("org.sqlite.JDBC");
-        try
-        {
-            // create a database connection
-            connection = DriverManager.getConnection("jdbc:sqlite:/Users/leo/github/Project/PublicWifi/publicWifi.sqlite3");
-            Statement statement = connection.createStatement();
-            PreparedStatement psmt = connection.prepareStatement("insert into public_wifi values(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
-            statement.setQueryTimeout(30);  // set timeout to 30 sec.
-
-            statement.executeUpdate("drop table if exists person");
-            statement.executeUpdate("create table person (id integer, name string)");
-            statement.executeUpdate("insert into person values(1, 'leo')");
-            statement.executeUpdate("insert into person values(2, 'yui')");
-            ResultSet rs = statement.executeQuery("select * from person");
-            while(rs.next())
-            {
-                // read the result set
-                System.out.println("name = " + rs.getString("name"));
-                System.out.println("id = " + rs.getInt("id"));
-            }
-            statement.executeUpdate("drop table person");
-        }
-        catch(SQLException e)
-        {
-            // if the error message is "out of memory",
-            // it probably means no database file is found
-            System.err.println(e.getMessage());
-        }
-        finally
-        {
-            try
-            {
-                if(connection != null)
-                    connection.close();
-            }
-            catch(SQLException e)
-            {
-                // connection close failed.
-                System.err.println(e.getMessage());
-            }
-        }
-    }
 
     public String urlBulid(int startPage, int lastPage){
         StringBuilder urlBuilder = new StringBuilder("http://openapi.seoul.go.kr:8088");
@@ -122,7 +33,10 @@ public class DBTest {
     }
 
     @Test
-    public void pagingTest() throws IOException {
+    public void getAllApiTest() throws IOException, ClassNotFoundException {
+
+        PublicWifiDAO publicWifiDAO = new PublicWifiDAO();
+
         // 요청받을 url 만들기
         String url = urlBulid(1, 1);
 
@@ -143,13 +57,7 @@ public class DBTest {
                 System.out.println("Response:" + bodyBuild);
 
                 // Json 문자열 -> JsonObject, JsonArray
-                JsonArray wifi_info = JsonParser.parseString(bodyBuild)
-                        .getAsJsonObject()
-                        .get("TbPublicWifiInfo")
-                        .getAsJsonObject()
-                        .get("row")
-                        .getAsJsonArray();
-
+                JsonArray wifi_info;
                 int list_total_count = JsonParser.parseString(bodyBuild)
                         .getAsJsonObject()
                         .get("TbPublicWifiInfo")
@@ -173,6 +81,8 @@ public class DBTest {
 
                     assert body != null;
                     bodyBuild = body.string();
+
+                    // Json 문자열 -> JsonObject, JsonArray
                     wifi_info = JsonParser.parseString(bodyBuild)
                             .getAsJsonObject()
                             .get("TbPublicWifiInfo")
@@ -182,8 +92,7 @@ public class DBTest {
 
                     for (int i = 0; i < wifi_info.size(); i++) {
                         JsonObject object = wifi_info.get(i).getAsJsonObject();
-//                        String str = object.get("X_SWIFI_MGR_NO").getAsString();
-                        PublicWifiDTO pubwifi = new PublicWifiDTO(
+                        PublicWifiDTO publicWifiDTO = new PublicWifiDTO(
                                 object.get("X_SWIFI_MGR_NO").getAsString(),
                                 object.get("X_SWIFI_WRDOFC").getAsString(),
                                 object.get("X_SWIFI_MAIN_NM").getAsString(),
@@ -201,13 +110,9 @@ public class DBTest {
                                 object.get("LNT").getAsDouble(),
                                 object.get("WORK_DTTM").getAsString()
                         );
-                        System.out.println(pubwifi.getX_SWIFI_MGR_NO());
-//                        System.out.println("번호 : " + object.get("X_SWIFI_MGR_NO"));
-//                        System.out.println("startNum = " + startNum);
-//                        System.out.println("lastNum = " + lastNum);
-//                        System.out.println("위치 : " + (lastNum - startNum));
-//                        System.out.println("wifi.size(): " + wifi_info.size());
-//                        System.out.println("------------------------");
+
+                        insertPublicWifiTest(publicWifiDTO);
+
                     }
 
                     if (lastNum == list_total_count) {
@@ -219,12 +124,77 @@ public class DBTest {
                     if (lastNum > list_total_count)
                         lastNum = list_total_count;
 
-                    System.out.println("lastNum = " + lastNum);
-                    System.out.println("list_total_count = " + list_total_count);
-
                 }
+                System.out.println(getTotalCountTest(lastNum, list_total_count));
             } else {
                 System.err.println("Error Occurred");
+            }
+        }
+    }
+
+    private int getTotalCountTest(int lastNum, int listTotalCount) {
+        if (lastNum == listTotalCount) {
+            return listTotalCount;
+        } else {
+            return -1;
+        }
+    }
+
+    public void insertPublicWifiTest(PublicWifiDTO dto) throws ClassNotFoundException {
+        Connection connection = null;
+        Class.forName("org.sqlite.JDBC");
+
+        try
+        {
+            // create a database connection
+            connection = DriverManager.getConnection("jdbc:sqlite:./publicWifi.sqlite3");
+            Statement statement = connection.createStatement();
+            PreparedStatement psmt = connection.prepareStatement("insert into public_wifi values(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
+            statement.setQueryTimeout(30);  // set timeout to 30 sec.
+
+            psmt.setString(1, dto.getX_SWIFI_MGR_NO());
+            psmt.setString(2, dto.getX_SWIFI_WRDOFC());
+            psmt.setString(3, dto.getX_SWIFI_MAIN_NM());
+            psmt.setString(4, dto.getX_SWIFI_ADRES1());
+            psmt.setString(5, dto.getX_SWIFI_ADRES2());
+            psmt.setString(6, dto.getX_SWIFI_INSTL_FLOOR());
+            psmt.setString(7, dto.getX_SWIFI_INSTL_TY());
+            psmt.setString(8, dto.getX_SWIFI_INSTL_MBY());
+            psmt.setString(9, dto.getX_SWIFI_SVC_SE());
+            psmt.setString(10, dto.getX_SWIFI_CMCWR());
+            psmt.setString(11, dto.getX_SWIFI_CNSTC_YEAR());
+            psmt.setString(12, dto.getX_SWIFI_INOUT_DOOR());
+            psmt.setString(13, dto.getX_SWIFI_REMARS3());
+            psmt.setDouble(14, dto.getLAT());
+            psmt.setDouble(15, dto.getLNT());
+            psmt.setString(16, dto.getWORK_DTTM());
+
+            psmt.executeUpdate();
+
+//            ResultSet rs = statement.executeQuery("select * from public_wifi");
+//            System.out.println(rs.next());
+            // read the result set
+//            System.out.println("id = " + rs.getString("X_SWIFI_MGR_NO"));
+
+            statement.executeUpdate("delete from public_wifi");
+        }
+        catch(SQLException e)
+        {
+            // if the error message is "out of memory",
+            // it probably means no database file is found
+            System.err.println(e.getMessage());
+        }
+        finally
+        {
+            try
+            {
+                if(connection != null)
+                    connection.close();
+            }
+            catch(SQLException e)
+            {
+                // connection close failed.
+                System.err.println(e.getMessage());
             }
         }
     }
