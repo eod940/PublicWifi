@@ -173,24 +173,32 @@ public class PublicWifiDAO {
         }
     }
 
-    public void selectPublicWifi() throws ClassNotFoundException, SQLException {
+    public void selectPublicWifi(int page, double lat, double lnt) throws ClassNotFoundException, SQLException {
         Connection connection = null;
+        PreparedStatement psmt;
         Class.forName("org.sqlite.JDBC");
 
         try
         {
             // create a database connection
             connection = DriverManager.getConnection(dbUrl);
-            Statement statement = connection.createStatement();
-            statement.setQueryTimeout(30);  // set timeout to 30 sec.
+            String sql = "select * from public_wifi " +
+                    "order by ABS(LAT - ?) * ABS(LAT - ?) + ABS(LNT - ?) * ABS(LNT - ?) " +
+                    "limit 20 offset ? * 20";
+            psmt = connection.prepareStatement(sql);
+            psmt.setQueryTimeout(30);  // set timeout to 30 sec.
             connection.setAutoCommit(false);
 
-            ResultSet rs = statement.executeQuery("select * from public_wifi limit 10");
+            psmt.setString(1, String.valueOf(lat));
+            psmt.setString(2, String.valueOf(lat));
+            psmt.setString(3, String.valueOf(lnt));
+            psmt.setString(4, String.valueOf(lnt));
+            psmt.setString(5, String.valueOf(page));
+
+            ResultSet rs = psmt.executeQuery(sql);
 
             while (rs.next()) {
-                String AddressLine1 = rs.getString("X_SWIFI_MGR_NO");
-
-                System.out.println(", " + AddressLine1);
+                System.out.println(rs.getString("X_SWIFI_MGR_NO"));
             }
 
             connection.commit();

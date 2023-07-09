@@ -15,8 +15,11 @@ public class SelectWifiServlet extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         PublicWifiDAO dao = new PublicWifiDAO();
+        double lat = (double) request.getAttribute("lat");
+        double lnt = (double) request.getAttribute("lnt");
+        int page = 0;
         try {
-            dao.selectPublicWifi();
+            dao.selectPublicWifi(page, lat, lnt);
         } catch (ClassNotFoundException | SQLException e) {
             throw new RuntimeException(e);
         }

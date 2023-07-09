@@ -11,7 +11,6 @@
     <title>Title</title>
 </head>
 <body>
-  hello World!!
-    it is so beautiful..
+
 </body>
 </html>

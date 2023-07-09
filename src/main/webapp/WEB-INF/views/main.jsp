@@ -57,7 +57,25 @@
         </thead>
         <tbody>
           <tr>
-            <td colspan="17">위치 정보를 입력한 후에 조회해 주세요.</td>
+            <%
+              String lat = request.getParameter("lat");
+              String lnt = request.getParameter("lnt");
+//              request.setAttribute("lat", lat);
+//              request.setAttribute("lnt", lnt);
+
+              if (lat == null | lnt == null) {
+                out.print("<td colspan=\"17\">위치 정보를 입력한 후에 조회해 주세요.</td>");
+              } else {
+                LinkedList<Double> chX = new LinkedList<>();
+                LinkedList<Double> chY = new LinkedList<>();
+
+                chX.add(Double.parseDouble(lat));
+                chY.add(Double.parseDouble(lnt));
+
+                out.print("<td>" + chX.get(0) + "</td>");
+                out.print("<td>" + chY.get(0) + "</td>");
+              }
+            %>
           </tr>
         </tbody>
       </table>
