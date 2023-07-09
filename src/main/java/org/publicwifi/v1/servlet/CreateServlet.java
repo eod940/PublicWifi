@@ -10,18 +10,22 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.sql.SQLException;
 
-@WebServlet("/select-wifi")
-public class SelectWifiServlet extends HttpServlet {
+@WebServlet("/create-wifi")
+public class CreateServlet extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-        PublicWifiDAO dao = new PublicWifiDAO();
-
+        PublicWifiDAO publicWifiDAO = new PublicWifiDAO();
         try {
-            dao.selectAllPublicWifi();
+            publicWifiDAO.deletePublicWifi();
         } catch (ClassNotFoundException | SQLException e) {
             throw new RuntimeException(e);
         }
-        System.out.println("select-wifi 작동완료");
+        System.out.println("create-wifi 작동완료");
         response.sendRedirect("/");
+    }
+
+    @Override
+    protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+
     }
 }

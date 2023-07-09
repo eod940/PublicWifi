@@ -1,4 +1,6 @@
-<%@ page import="java.util.LinkedList" %><%--
+<%@ page import="java.util.LinkedList" %>
+<%@ page import="java.util.ArrayList" %>
+<%@ page import="org.publicwifi.v1.dto.PublicWifiDTO" %><%--
   Created by IntelliJ IDEA.
   User: leo
   Date: 2023/07/02
@@ -66,6 +68,9 @@
               if (lat == null | lnt == null) {
                 out.print("<td colspan=\"17\">위치 정보를 입력한 후에 조회해 주세요.</td>");
               } else {
+                ArrayList<PublicWifiDTO> wifiDTOS = new ArrayList<>();
+                wifiDTOS = (ArrayList<PublicWifiDTO>) request.getAttribute("wifiDTOS");
+
                 LinkedList<Double> chX = new LinkedList<>();
                 LinkedList<Double> chY = new LinkedList<>();
 
@@ -73,7 +78,23 @@
                 chY.add(Double.parseDouble(lnt));
 
                 out.print("<td>" + chX.get(0) + "</td>");
-                out.print("<td>" + chY.get(0) + "</td>");
+                out.print("<td>" + wifiDTOS.get(0).getX_SWIFI_MGR_NO() + "</td>");
+                out.print("<td>" + wifiDTOS.get(0).getX_SWIFI_WRDOFC() + "</td>");
+                out.print("<td>" + wifiDTOS.get(0).getX_SWIFI_MAIN_NM() + "</td>");
+                out.print("<td>" + wifiDTOS.get(0).getX_SWIFI_ADRES1() + "</td>");
+                out.print("<td>" + wifiDTOS.get(0).getX_SWIFI_ADRES2() + "</td>");
+                out.print("<td>" + wifiDTOS.get(0).getX_SWIFI_INSTL_FLOOR() + "</td>");
+                out.print("<td>" + wifiDTOS.get(0).getX_SWIFI_INSTL_TY() + "</td>");
+                out.print("<td>" + wifiDTOS.get(0).getX_SWIFI_INSTL_MBY() + "</td>");
+                out.print("<td>" + wifiDTOS.get(0).getX_SWIFI_SVC_SE() + "</td>");
+                out.print("<td>" + wifiDTOS.get(0).getX_SWIFI_CMCWR() + "</td>");
+                out.print("<td>" + wifiDTOS.get(0).getX_SWIFI_CNSTC_YEAR() + "</td>");
+                out.print("<td>" + wifiDTOS.get(0).getX_SWIFI_INOUT_DOOR() + "</td>");
+                out.print("<td>" + wifiDTOS.get(0).getX_SWIFI_REMARS3() + "</td>");
+                out.print("<td>" + wifiDTOS.get(0).getX_SWIFI_REMARS3() + "</td>");
+                out.print("<td>" + wifiDTOS.get(0).getLAT() + "</td>");
+                out.print("<td>" + wifiDTOS.get(0).getLNT() + "</td>");
+                out.print("<td>" + wifiDTOS.get(0).getWORK_DTTM() + "</td>");
               }
             %>
           </tr>

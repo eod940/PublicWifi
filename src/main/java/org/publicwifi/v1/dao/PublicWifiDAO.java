@@ -3,9 +3,10 @@ package org.publicwifi.v1.dao;
 import org.publicwifi.v1.dto.PublicWifiDTO;
 
 import java.sql.*;
+import java.util.ArrayList;
 
 public class PublicWifiDAO {
-    private static final String dbUrl = "jdbc:sqlite:./publicWifi.sqlite3";
+    private static final String dbUrl = "jdbc:sqlite:publicWifi.sqlite3";
 
     public void createPublicWifi() throws ClassNotFoundException, SQLException {
         Connection connection = null;
@@ -38,6 +39,46 @@ public class PublicWifiDAO {
                     "    LAT REAL,\n" +
                     "    LNT REAL,\n" +
                     "    WORK_DTTM TEXT)");
+
+        }
+        catch(SQLException e)
+        {
+            // if the error message is "out of memory",
+            // it probably means no database file is found
+            if (connection != null) {
+                connection.rollback();
+            }
+            System.err.println(e.getMessage());
+        }
+        finally
+        {
+            try
+            {
+                if(connection != null)
+                    connection.close();
+            }
+            catch(SQLException e)
+            {
+                // connection close failed.
+                System.err.println(e.getMessage());
+            }
+        }
+    }
+
+    public void dropPublicWifi() throws ClassNotFoundException, SQLException {
+        Connection connection = null;
+        Class.forName("org.sqlite.JDBC");
+
+        try
+        {
+            // create a database connection
+            connection = DriverManager.getConnection(dbUrl);
+            Statement statement = connection.createStatement();
+            statement.setQueryTimeout(30);  // set timeout to 30 sec.
+
+            connection.setAutoCommit(false);
+
+            statement.executeUpdate("drop table public_wifi");
 
         }
         catch(SQLException e)
@@ -173,7 +214,8 @@ public class PublicWifiDAO {
         }
     }
 
-    public void selectPublicWifi(int page, double lat, double lnt) throws ClassNotFoundException, SQLException {
+    public ArrayList<PublicWifiDTO> selectPublicWifi(int page, double lat, double lnt) throws ClassNotFoundException, SQLException {
+        ArrayList<PublicWifiDTO> list = new ArrayList<>();
         Connection connection = null;
         PreparedStatement psmt;
         Class.forName("org.sqlite.JDBC");
@@ -183,22 +225,41 @@ public class PublicWifiDAO {
             // create a database connection
             connection = DriverManager.getConnection(dbUrl);
             String sql = "select * from public_wifi " +
-                    "order by ABS(LAT - ?) * ABS(LAT - ?) + ABS(LNT - ?) * ABS(LNT - ?) " +
+                    "order by ABS(LAT - ?) * ABS(LAT - ?) + ABS(LNT - ?) * ABS(LNT - ?) DESC " +
                     "limit 20 offset ? * 20";
             psmt = connection.prepareStatement(sql);
+
             psmt.setQueryTimeout(30);  // set timeout to 30 sec.
             connection.setAutoCommit(false);
 
-            psmt.setString(1, String.valueOf(lat));
-            psmt.setString(2, String.valueOf(lat));
-            psmt.setString(3, String.valueOf(lnt));
-            psmt.setString(4, String.valueOf(lnt));
-            psmt.setString(5, String.valueOf(page));
+            psmt.setDouble(1, lat);
+            psmt.setDouble(2, lat);
+            psmt.setDouble(3, lnt);
+            psmt.setDouble(4, lnt);
+            psmt.setInt(5, page);
 
-            ResultSet rs = psmt.executeQuery(sql);
+            ResultSet rs = psmt.executeQuery();
 
             while (rs.next()) {
-                System.out.println(rs.getString("X_SWIFI_MGR_NO"));
+                PublicWifiDTO publicWifiDTO = new PublicWifiDTO(
+                        rs.getString("X_SWIFI_MGR_NO"),
+                        rs.getString("X_SWIFI_WRDOFC"),
+                        rs.getString("X_SWIFI_MAIN_NM"),
+                        rs.getString("X_SWIFI_ADRES1"),
+                        rs.getString("X_SWIFI_ADRES2"),
+                        rs.getString("X_SWIFI_INSTL_FLOOR"),
+                        rs.getString("X_SWIFI_INSTL_TY"),
+                        rs.getString("X_SWIFI_INSTL_MBY"),
+                        rs.getString("X_SWIFI_SVC_SE"),
+                        rs.getString("X_SWIFI_CMCWR"),
+                        rs.getString("X_SWIFI_CNSTC_YEAR"),
+                        rs.getString("X_SWIFI_INOUT_DOOR"),
+                        rs.getString("X_SWIFI_REMARS3"),
+                        rs.getDouble("LAT"),
+                        rs.getDouble("LNT"),
+                        rs.getString("WORK_DTTM")
+                );
+                list.add(publicWifiDTO);
             }
 
             connection.commit();
@@ -216,6 +277,59 @@ public class PublicWifiDAO {
         {
             try
             {
+                if(connection != null) {
+                    connection.close();
+                }
+            }
+            catch(SQLException e)
+            {
+                // connection close failed.
+                System.err.println(e.getMessage());
+            }
+        }
+        return list;
+    }
+
+    public void selectAllPublicWifi() throws ClassNotFoundException, SQLException {
+        Connection connection = null;
+        PreparedStatement psmt = null;
+        Class.forName("org.sqlite.JDBC");
+
+        try
+        {
+            // create a database connection
+            connection = DriverManager.getConnection(dbUrl);
+            String sql = "SELECT * FROM public_wifi LIMIT 20";
+            psmt = connection.prepareStatement(sql);
+
+            connection.setAutoCommit(false);
+
+            ResultSet rs = psmt.executeQuery();
+            System.out.println(psmt.isClosed());
+
+            while (rs.next()) {
+                System.out.println(rs.getString("X_SWIFI_MGR_NO"));
+            }
+
+            connection.commit();
+            rs.close();
+        }
+        catch(SQLException e)
+        {
+            // if the error message is "out of memory",
+            // it probably means no database file is found
+            if (connection != null) {
+                connection.rollback();
+            }
+            System.err.println(e.getMessage());
+        }
+        finally
+        {
+            try
+            {
+                if (psmt != null) {
+                    psmt.close();
+                }
                 if(connection != null) {
                     connection.close();
                 }
