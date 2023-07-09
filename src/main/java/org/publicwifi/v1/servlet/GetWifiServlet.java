@@ -19,6 +19,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.sql.SQLException;
 
 @WebServlet("/load-wifi")
 public class GetWifiServlet extends HttpServlet {
@@ -26,31 +27,24 @@ public class GetWifiServlet extends HttpServlet {
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         String path = "/WEB-INF/views/load-wifi.jsp";
         RequestDispatcher requestDispatcher = request.getRequestDispatcher(path);
+        int dbCount = 0;  // 개수
 
         // DB에 저장하는 코드
-//        try {
-//            getAllApi();
-//            PublicWifiDAO publicWifiDAO = new PublicWifiDAO();
-//            publicWifiDAO.insertPublicWifi();
-//        } catch (ClassNotFoundException e) {
-//            throw new RuntimeException(e);
-//        }
-        System.out.println("서블릿 정상 작동");
-
-        int dbCode = (int) (Math.random() * 2);  // 종료 코드 (1: 정상, 0: 에러)
-        System.out.println(dbCode);
-
-        // 완료 후 redirect
-        if (dbCode == 1) {
-            request.setAttribute("nums", dbCode);
-            requestDispatcher.forward(request, response);
-        } else {
-            request.setAttribute("error", dbCode);
-            requestDispatcher.forward(request, response);
+        try {
+            dbCount = getAllApi();
+        } catch (ClassNotFoundException | SQLException e) {
+            throw new RuntimeException(e);
         }
+        System.out.println("서블릿 정상 작동");  // 로그
+        System.out.println("dbCount: " + dbCount);
+
+        // 완료 후 forward
+        request.setAttribute("nums", dbCount);
+        requestDispatcher.forward(request, response);
+
     }
 
-    public String urlBulid(int startPage, int lastPage){
+    public static String urlBulid(int startPage, int lastPage){
         StringBuilder urlBuilder = new StringBuilder("http://openapi.seoul.go.kr:8088");
         String key = "546e4d5350656f6433385453487941";
         String type = "json";
@@ -67,7 +61,10 @@ public class GetWifiServlet extends HttpServlet {
         return urlBuilder.toString();
     }
 
-    public int getAllApi() throws IOException {
+    public static int getAllApi() throws IOException, SQLException, ClassNotFoundException {
+
+        PublicWifiDAO publicWifiDAO = new PublicWifiDAO();
+        int cnt = 0;
 
         // 요청받을 url 만들기
         String url = urlBulid(1, 1);
@@ -97,7 +94,6 @@ public class GetWifiServlet extends HttpServlet {
                         .get("list_total_count")
                         .getAsInt();
 
-
                 boolean isWorking = true;
                 int startNum = 1;
                 int lastNum = startNum + 999;
@@ -124,6 +120,26 @@ public class GetWifiServlet extends HttpServlet {
 
                     for (int i = 0; i < wifi_info.size(); i++) {
                         JsonObject object = wifi_info.get(i).getAsJsonObject();
+                        PublicWifiDTO publicWifiDTO = new PublicWifiDTO(
+                                object.get("X_SWIFI_MGR_NO").getAsString(),
+                                object.get("X_SWIFI_WRDOFC").getAsString(),
+                                object.get("X_SWIFI_MAIN_NM").getAsString(),
+                                object.get("X_SWIFI_ADRES1").getAsString(),
+                                object.get("X_SWIFI_ADRES2").getAsString(),
+                                object.get("X_SWIFI_INSTL_FLOOR").getAsString(),
+                                object.get("X_SWIFI_INSTL_TY").getAsString(),
+                                object.get("X_SWIFI_INSTL_MBY").getAsString(),
+                                object.get("X_SWIFI_SVC_SE").getAsString(),
+                                object.get("X_SWIFI_CMCWR").getAsString(),
+                                object.get("X_SWIFI_CNSTC_YEAR").getAsString(),
+                                object.get("X_SWIFI_INOUT_DOOR").getAsString(),
+                                object.get("X_SWIFI_REMARS3").getAsString(),
+                                object.get("LAT").getAsDouble(),
+                                object.get("LNT").getAsDouble(),
+                                object.get("WORK_DTTM").getAsString()
+                        );
+
+                        cnt += publicWifiDAO.insertPublicWifi(publicWifiDTO);
 
                     }
 
@@ -131,28 +147,16 @@ public class GetWifiServlet extends HttpServlet {
                         isWorking = false;
                     }
 
-                    startNum = lastNum;
+                    startNum = lastNum + 1;
                     lastNum = startNum + 999;
                     if (lastNum > list_total_count)
                         lastNum = list_total_count;
 
-                    System.out.println("lastNum = " + lastNum);
-                    System.out.println("list_total_count = " + list_total_count);
-
                 }
-                return getTotalCount(lastNum, list_total_count);
             } else {
                 System.err.println("Error Occurred");
             }
         }
-        return -1;
-    }
-
-    private int getTotalCount(int lastNum, int listTotalCount) {
-        if (lastNum == listTotalCount) {
-            return listTotalCount;
-        } else {
-            return -1;
-        }
+        return cnt;
     }
 }

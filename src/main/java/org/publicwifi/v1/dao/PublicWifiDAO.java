@@ -7,7 +7,7 @@ import java.sql.*;
 public class PublicWifiDAO {
     private static final String dbUrl = "jdbc:sqlite:./publicWifi.sqlite3";
 
-    public void createPublicWifi() throws ClassNotFoundException {
+    public void createPublicWifi() throws ClassNotFoundException, SQLException {
         Connection connection = null;
         Class.forName("org.sqlite.JDBC");
 
@@ -16,9 +16,9 @@ public class PublicWifiDAO {
             // create a database connection
             connection = DriverManager.getConnection(dbUrl);
             Statement statement = connection.createStatement();
-            PreparedStatement psmt = connection.prepareStatement("insert into public_wifi values(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
-
             statement.setQueryTimeout(30);  // set timeout to 30 sec.
+
+            connection.setAutoCommit(false);
 
             statement.executeUpdate("drop table if exists public_wifi");
             statement.executeUpdate("create table public_wifi " +
@@ -44,6 +44,9 @@ public class PublicWifiDAO {
         {
             // if the error message is "out of memory",
             // it probably means no database file is found
+            if (connection != null) {
+                connection.rollback();
+            }
             System.err.println(e.getMessage());
         }
         finally
@@ -61,17 +64,21 @@ public class PublicWifiDAO {
         }
     }
 
-    public void insertPublicWifi(PublicWifiDTO dto) throws ClassNotFoundException {
+    public int insertPublicWifi(PublicWifiDTO dto) throws ClassNotFoundException, SQLException {
+        int inserted = 0;
         Connection connection = null;
+        PreparedStatement psmt = null;
         Class.forName("org.sqlite.JDBC");
 
         try
         {
             // create a database connection
             connection = DriverManager.getConnection(dbUrl);
-            Statement statement = connection.createStatement();
-            PreparedStatement psmt = connection.prepareStatement("insert into public_wifi values(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
-            statement.setQueryTimeout(30);  // set timeout to 30 sec.
+            connection.setAutoCommit(false);
+            String sql = "insert into public_wifi values(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+
+            psmt = connection.prepareStatement(sql);
+            psmt.setQueryTimeout(30);  // set timeout to 30 sec.
 
             psmt.setString(1, dto.getX_SWIFI_MGR_NO());
             psmt.setString(2, dto.getX_SWIFI_WRDOFC());
@@ -89,29 +96,121 @@ public class PublicWifiDAO {
             psmt.setDouble(14, dto.getLAT());
             psmt.setDouble(15, dto.getLNT());
             psmt.setString(16, dto.getWORK_DTTM());
+            psmt.executeUpdate();
 
-            ResultSet rs = statement.executeQuery("select * from public_wifi");
-            while(rs.next())
-            {
-                // read the result set
-                System.out.println("id = " + rs.getString("X_SWIFI_MGR_NO"));
-                System.out.println("lat = " + rs.getString("LAT"));
-                System.out.println("lnt = " + rs.getString("LNT"));
-            }
-            statement.executeUpdate("delete from public_wifi");
+            inserted = 1;
+            connection.commit();
         }
         catch(SQLException e)
         {
             // if the error message is "out of memory",
             // it probably means no database file is found
+            if (connection != null) {
+                connection.rollback();
+            }
+            System.err.println(e.getMessage());
+            throw e;
+        }
+        finally
+        {
+            try
+            {
+                if (psmt != null) {
+                    psmt.close();
+                }
+                if(connection != null) {
+                    connection.setAutoCommit(true);
+                    connection.close();
+                }
+            }
+            catch(SQLException e)
+            {
+                // connection close failed.
+                System.err.println(e.getMessage());
+            }
+        }
+        return inserted;
+    }
+
+    public void deletePublicWifi() throws ClassNotFoundException, SQLException {
+        Connection connection = null;
+        Class.forName("org.sqlite.JDBC");
+
+        try
+        {
+            // create a database connection
+            connection = DriverManager.getConnection(dbUrl);
+            Statement statement = connection.createStatement();
+            statement.setQueryTimeout(30);  // set timeout to 30 sec.
+            connection.setAutoCommit(false);
+
+            statement.executeUpdate("delete from public_wifi");
+
+            connection.commit();
+        }
+        catch(SQLException e)
+        {
+            // if the error message is "out of memory",
+            // it probably means no database file is found
+            if (connection != null) {
+                connection.rollback();
+            }
             System.err.println(e.getMessage());
         }
         finally
         {
             try
             {
-                if(connection != null)
+                if(connection != null) {
                     connection.close();
+                }
+            }
+            catch(SQLException e)
+            {
+                // connection close failed.
+                System.err.println(e.getMessage());
+            }
+        }
+    }
+
+    public void selectPublicWifi() throws ClassNotFoundException, SQLException {
+        Connection connection = null;
+        Class.forName("org.sqlite.JDBC");
+
+        try
+        {
+            // create a database connection
+            connection = DriverManager.getConnection(dbUrl);
+            Statement statement = connection.createStatement();
+            statement.setQueryTimeout(30);  // set timeout to 30 sec.
+            connection.setAutoCommit(false);
+
+            ResultSet rs = statement.executeQuery("select * from public_wifi limit 10");
+
+            while (rs.next()) {
+                String AddressLine1 = rs.getString("X_SWIFI_MGR_NO");
+
+                System.out.println(", " + AddressLine1);
+            }
+
+            connection.commit();
+        }
+        catch(SQLException e)
+        {
+            // if the error message is "out of memory",
+            // it probably means no database file is found
+            if (connection != null) {
+                connection.rollback();
+            }
+            System.err.println(e.getMessage());
+        }
+        finally
+        {
+            try
+            {
+                if(connection != null) {
+                    connection.close();
+                }
             }
             catch(SQLException e)
             {

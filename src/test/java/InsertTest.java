@@ -71,6 +71,8 @@ public class InsertTest {
                 int lastNum = startNum + 999;
 
                 while (isWorking) {
+                    System.out.println("startNum = " + startNum);
+                    System.out.println("lastNum = " + lastNum);
                     url = urlBulid(startNum, lastNum);
                     builder = new Request.Builder().url(url).get();
                     request = builder.build();
@@ -119,8 +121,9 @@ public class InsertTest {
                         isWorking = false;
                     }
 
-                    startNum = lastNum;
+                    startNum = lastNum + 1;
                     lastNum = startNum + 999;
+
                     if (lastNum > list_total_count)
                         lastNum = list_total_count;
 
