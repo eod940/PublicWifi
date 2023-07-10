@@ -3,7 +3,8 @@
 <%@ page import="org.publicwifi.v1.dto.PublicWifiDTO" %>
 <%@ page import="org.publicwifi.v1.others.Distance" %>
 <%@ page import="org.publicwifi.v1.dto.HistoryDTO" %>
-<%@ page import="java.lang.reflect.Array" %><%--
+<%@ page import="java.lang.reflect.Array" %>
+<%@ page import="org.publicwifi.v1.dto.BookmarkDTO" %><%--
   Created by IntelliJ IDEA.
   User: leo
   Date: 2023/07/02
@@ -24,34 +25,50 @@
       <a href="${pageContext.request.contextPath}/bookmark-list">즐겨찾기 보기</a> |
       <a href="${pageContext.request.contextPath}/bookmark-group">즐겨찾기 그룹 관리</a> |
     </nav>
+    <form action="${pageContext.request.contextPath}/bookmark-group-add">
+      <button type="submit">북마크 그룹 이름 추가</button>
+    </form>
 
     <main>
       <table>
         <thead>
           <tr>
             <th>ID</th>
-            <th>X좌표</th>
-            <th>Y좌표</th>
-            <th>조회일자</th>
+            <th>북마크 이름</th>
+            <th>순서</th>
+            <th>등록일자</th>
+            <th>수정일자</th>
             <th>비고</th>
           </tr>
         </thead>
         <tbody>
             <%
-              if (request.getAttribute("historyList") == null) {
-                out.print("<td colspan=\"17\">없음</td>");
+              ArrayList<BookmarkDTO> dtos = (ArrayList<BookmarkDTO>) request.getAttribute("bookmarkList");
+
+              if (dtos.isEmpty()) {
+                out.print("<td colspan=\"17\">정보가 존재하지 않습니다.</td>");
               } else {
-                ArrayList<HistoryDTO> dtos = (ArrayList<HistoryDTO>) request.getAttribute("historyList");
                 for (int i = 0; i < dtos.size(); i++) {
                   out.print("<tr>");
-                  out.print("  <td>" + dtos.get(i).getHistory_id() + "</td>");
-                  out.print("  <td>" + dtos.get(i).getLAT() + "</td>");
-                  out.print("  <td>" + dtos.get(i).getLNT() + "</td>");
-                  out.print("  <td>" + dtos.get(i).getSearched_at() + "</td>");
+                  out.print("  <td>" + dtos.get(i).getBookmark_id() + "</td>");
+                  out.print("  <td>" + dtos.get(i).getBookmark_name() + "</td>");
+                  out.print("  <td>" + dtos.get(i).getBookmark_num() + "</td>");
+                  out.print("  <td>" + dtos.get(i).getCreated_at() + "</td>");
+                  if (dtos.get(i).getEdited_at() == null) {
+                    out.print("  <td></td>");
+                  } else {
+                    out.print("  <td>" + dtos.get(i).getEdited_at() + "</td>");
+                  }
                   out.print("  <td>");
-                  out.print("    <form method=\"get\" action=\"/delete-history\">");
-                  out.print("      <input type=\"hidden\" id=\"history_id\" name=\"history_id\" value=\"" +
-                          dtos.get(i).getHistory_id() +
+                  out.print("    <form method=\"get\" action=\"/editing-bookmark\">");
+                  out.print("      <input type=\"hidden\" id=\"bookmark_id\" name=\"bookmark_id\" value=\"" +
+                          dtos.get(i).getBookmark_id() +
+                          "\">");
+                  out.print("      <button type=\"submit\">수정</button>");
+                  out.print("    </form>");
+                  out.print("    <form method=\"get\" action=\"/del-bookmark\">");
+                  out.print("      <input type=\"hidden\" id=\"bookmark_id\" name=\"bookmark_id\" value=\"" +
+                          dtos.get(i).getBookmark_id() +
                           "\">");
                   out.print("      <button type=\"submit\">삭제</button>");
                   out.print("    </form>");

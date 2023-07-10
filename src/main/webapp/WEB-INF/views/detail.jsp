@@ -3,7 +3,8 @@
 <%@ page import="org.publicwifi.v1.dto.PublicWifiDTO" %>
 <%@ page import="org.publicwifi.v1.others.Distance" %>
 <%@ page import="org.publicwifi.v1.dto.HistoryDTO" %>
-<%@ page import="java.lang.reflect.Array" %><%--
+<%@ page import="java.lang.reflect.Array" %>
+<%@ page import="org.publicwifi.v1.dto.BookmarkDTO" %><%--
   Created by IntelliJ IDEA.
   User: leo
   Date: 2023/07/02
@@ -21,12 +22,37 @@
       <a href="${pageContext.request.contextPath}/">홈</a> |
       <a href="${pageContext.request.contextPath}/history">위치 히스토리 목록</a> |
       <a href="${pageContext.request.contextPath}/load-wifi">Open API 와이파이 정보 가져오기</a> |
-      <a href="#">즐겨찾기 보기</a> |
-      <a href="#">즐겨찾기 그룹 관리</a> |
+      <a href="${pageContext.request.contextPath}/bookmark-list">즐겨찾기 보기</a> |
+      <a href="${pageContext.request.contextPath}/bookmark-group">즐겨찾기 그룹 관리</a> |
     </nav>
-    <%
-      ArrayList<PublicWifiDTO> wifiDTOS = (ArrayList<PublicWifiDTO>) request.getAttribute("wifiDTOS");
-    %>
+
+    <div id="bookmark">
+      <form action="${pageContext.request.contextPath}/bookmark-add">
+        <label for="bookmark_group"></label>
+        <select name="bookmark_group" id="bookmark_group">
+          <option>북마크 그룹 이름 선택</option>
+          <%
+            ArrayList<PublicWifiDTO> wifiDTOS = (ArrayList<PublicWifiDTO>) request.getAttribute("wifiDTOS");
+            ArrayList<BookmarkDTO> bookmark = (ArrayList<BookmarkDTO>) request.getAttribute("bookmarkGroup");
+            String wifiId = wifiDTOS.get(0).getX_SWIFI_MGR_NO();
+            if (bookmark.size() != 0) {
+              for (int i = 0; i < bookmark.size(); i++){
+                out.print("<option value=\"" + bookmark.get(i).getBookmark_id() + "\">");
+                out.print(bookmark.get(i).getBookmark_name());
+                out.print("</option>");
+              }
+            }
+          %>
+        </select>
+        <%
+          out.print("<input type=\"hidden\" name=\"wifi_id\" value=\"" +
+                  wifiId +
+                  "\"/>");
+        %>
+        <button type="submit">즐겨찾기 추가하기</button>
+      </form>
+    </div>
+
     <main>
       <table>
         <tr>

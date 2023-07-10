@@ -40,6 +40,7 @@ public class PublicWifiDAO {
                     "    LNT REAL,\n" +
                     "    WORK_DTTM TEXT)");
 
+            connection.commit();
         }
         catch(SQLException e)
         {

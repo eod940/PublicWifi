@@ -1,9 +1,7 @@
-package org.publicwifi.v1.servlet.wifi;
+package org.publicwifi.v1.servlet.bookmark;
 
 import org.publicwifi.v1.dao.BookmarkDAO;
-import org.publicwifi.v1.dao.PublicWifiDAO;
 import org.publicwifi.v1.dto.BookmarkDTO;
-import org.publicwifi.v1.dto.PublicWifiDTO;
 
 import javax.servlet.RequestDispatcher;
 import javax.servlet.ServletException;
@@ -15,30 +13,20 @@ import java.io.IOException;
 import java.sql.SQLException;
 import java.util.ArrayList;
 
-@WebServlet("/detail")
-public class DetailWifiServlet extends HttpServlet {
+@WebServlet("/bookmark-group")
+public class GroupBookmarkServlet extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-        String path = "/WEB-INF/views/detail.jsp";
-        PublicWifiDAO dao = new PublicWifiDAO();
-        BookmarkDAO daoB = new BookmarkDAO();
-        ArrayList<PublicWifiDTO> list = new ArrayList<>();
-        ArrayList<BookmarkDTO> listB = new ArrayList<>();
-
+        String path = "/WEB-INF/views/bookmark-group.jsp";
         RequestDispatcher requestDispatcher = request.getRequestDispatcher(path);
-        String mgrNo = request.getParameter("mgrNo");
-
+        BookmarkDAO dao = new BookmarkDAO();
+        ArrayList<BookmarkDTO> list = new ArrayList<>();
         try {
-            list = dao.selectDetailPublicWifi(mgrNo);
-            listB = daoB.selectBookmark();
-
-        } catch (ClassNotFoundException | SQLException e) {
+            list = dao.selectBookmark();
+        } catch (SQLException | ClassNotFoundException e) {
             throw new RuntimeException(e);
         }
-
-        // 완료 후 forward
-        request.setAttribute("wifiDTOS", list);
-        request.setAttribute("bookmarkGroup", listB);
+        request.setAttribute("bookmarkList", list);
         requestDispatcher.forward(request, response);
     }
 

@@ -19,8 +19,8 @@
       <a href="${pageContext.request.contextPath}/">홈</a> |
       <a href="${pageContext.request.contextPath}/history">위치 히스토리 목록</a> |
       <a href="${pageContext.request.contextPath}/load-wifi">Open API 와이파이 정보 가져오기</a> |
-      <a href="#">즐겨찾기 보기</a> |
-      <a href="#">즐겨찾기 그룹 관리</a> |
+      <a href="${pageContext.request.contextPath}/bookmark-list">즐겨찾기 보기</a> |
+      <a href="${pageContext.request.contextPath}/bookmark-group">즐겨찾기 그룹 관리</a> |
     </nav>
     <div>
       <form method="get" action="${pageContext.request.contextPath}/view">
