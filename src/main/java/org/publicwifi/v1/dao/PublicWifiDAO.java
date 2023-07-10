@@ -121,23 +121,44 @@ public class PublicWifiDAO {
             psmt = connection.prepareStatement(sql);
             psmt.setQueryTimeout(30);  // set timeout to 30 sec.
 
-            psmt.setString(1, dto.getX_SWIFI_MGR_NO());
-            psmt.setString(2, dto.getX_SWIFI_WRDOFC());
-            psmt.setString(3, dto.getX_SWIFI_MAIN_NM());
-            psmt.setString(4, dto.getX_SWIFI_ADRES1());
-            psmt.setString(5, dto.getX_SWIFI_ADRES2());
-            psmt.setString(6, dto.getX_SWIFI_INSTL_FLOOR());
-            psmt.setString(7, dto.getX_SWIFI_INSTL_TY());
-            psmt.setString(8, dto.getX_SWIFI_INSTL_MBY());
-            psmt.setString(9, dto.getX_SWIFI_SVC_SE());
-            psmt.setString(10, dto.getX_SWIFI_CMCWR());
-            psmt.setString(11, dto.getX_SWIFI_CNSTC_YEAR());
-            psmt.setString(12, dto.getX_SWIFI_INOUT_DOOR());
-            psmt.setString(13, dto.getX_SWIFI_REMARS3());
-            psmt.setDouble(14, dto.getLAT());
-            psmt.setDouble(15, dto.getLNT());
-            psmt.setString(16, dto.getWORK_DTTM());
-            psmt.executeUpdate();
+            if (dto.getLAT() > 43.0 && dto.getLNT() < 124.0) {
+                // 위경도가 변경되었다면 바꿔서 insert
+                psmt.setString(1, dto.getX_SWIFI_MGR_NO());
+                psmt.setString(2, dto.getX_SWIFI_WRDOFC());
+                psmt.setString(3, dto.getX_SWIFI_MAIN_NM());
+                psmt.setString(4, dto.getX_SWIFI_ADRES1());
+                psmt.setString(5, dto.getX_SWIFI_ADRES2());
+                psmt.setString(6, dto.getX_SWIFI_INSTL_FLOOR());
+                psmt.setString(7, dto.getX_SWIFI_INSTL_TY());
+                psmt.setString(8, dto.getX_SWIFI_INSTL_MBY());
+                psmt.setString(9, dto.getX_SWIFI_SVC_SE());
+                psmt.setString(10, dto.getX_SWIFI_CMCWR());
+                psmt.setString(11, dto.getX_SWIFI_CNSTC_YEAR());
+                psmt.setString(12, dto.getX_SWIFI_INOUT_DOOR());
+                psmt.setString(13, dto.getX_SWIFI_REMARS3());
+                psmt.setDouble(14, dto.getLNT());
+                psmt.setDouble(15, dto.getLAT());
+                psmt.setString(16, dto.getWORK_DTTM());
+                psmt.executeUpdate();
+            } else {
+                psmt.setString(1, dto.getX_SWIFI_MGR_NO());
+                psmt.setString(2, dto.getX_SWIFI_WRDOFC());
+                psmt.setString(3, dto.getX_SWIFI_MAIN_NM());
+                psmt.setString(4, dto.getX_SWIFI_ADRES1());
+                psmt.setString(5, dto.getX_SWIFI_ADRES2());
+                psmt.setString(6, dto.getX_SWIFI_INSTL_FLOOR());
+                psmt.setString(7, dto.getX_SWIFI_INSTL_TY());
+                psmt.setString(8, dto.getX_SWIFI_INSTL_MBY());
+                psmt.setString(9, dto.getX_SWIFI_SVC_SE());
+                psmt.setString(10, dto.getX_SWIFI_CMCWR());
+                psmt.setString(11, dto.getX_SWIFI_CNSTC_YEAR());
+                psmt.setString(12, dto.getX_SWIFI_INOUT_DOOR());
+                psmt.setString(13, dto.getX_SWIFI_REMARS3());
+                psmt.setDouble(14, dto.getLAT());
+                psmt.setDouble(15, dto.getLNT());
+                psmt.setString(16, dto.getWORK_DTTM());
+                psmt.executeUpdate();
+            }
 
             inserted = 1;
             connection.commit();
@@ -225,7 +246,7 @@ public class PublicWifiDAO {
             // create a database connection
             connection = DriverManager.getConnection(dbUrl);
             String sql = "select * from public_wifi " +
-                    "order by ABS(LAT - ?) * ABS(LAT - ?) + ABS(LNT - ?) * ABS(LNT - ?) DESC " +
+                    "order by ABS(LAT - ?) * ABS(LAT - ?) + ABS(LNT - ?) * ABS(LNT - ?) " +
                     "limit 20 offset ? * 20";
             psmt = connection.prepareStatement(sql);
 
