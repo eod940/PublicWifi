@@ -1,4 +1,9 @@
-<%@ page import="java.util.LinkedList" %><%--
+<%@ page import="java.util.LinkedList" %>
+<%@ page import="java.util.ArrayList" %>
+<%@ page import="org.publicwifi.v1.dto.PublicWifiDTO" %>
+<%@ page import="org.publicwifi.v1.others.Distance" %>
+<%@ page import="org.publicwifi.v1.dto.HistoryDTO" %>
+<%@ page import="java.lang.reflect.Array" %><%--
   Created by IntelliJ IDEA.
   User: leo
   Date: 2023/07/02
@@ -19,46 +24,43 @@
       <a href="#">즐겨찾기 보기</a> |
       <a href="#">즐겨찾기 그룹 관리</a> |
     </nav>
-    <div>
-      <form method="get" action="${pageContext.request.contextPath}/view">
-        <label for="lat">LAT:</label>
-        <input name="lat" type="text" id="lat" value="0.0">
-
-        <label for="lnt">LNT:</label>
-        <input name="lnt" type="text" id="lnt" value="0.0">
-
-        <button type="button" onclick="clickBtn()">내 위치 가져오기</button>
-        <button type="submit">근처 WIFI 정보 보기</button>
-      </form>
-    </div>
 
     <main>
       <table>
         <thead>
           <tr>
-            <th>거리(Km)</th>
-            <th>관리번호</th>
-            <th>자치구</th>
-            <th>와이파이명</th>
-            <th>도로명주소</th>
-            <th>상세주소</th>
-            <th>설치위치(층)</th>
-            <th>설치유형</th>
-            <th>설치기관</th>
-            <th>서비스 구분</th>
-            <th>망 종류</th>
-            <th>설치년도</th>
-            <th>실내외구분</th>
-            <th>WIFI 접속환경</th>
+            <th>ID</th>
             <th>X좌표</th>
             <th>Y좌표</th>
-            <th>작업일자</th>
+            <th>조회일자</th>
+            <th>비고</th>
           </tr>
         </thead>
         <tbody>
-          <tr>
-            <td colspan="17">위치 정보를 입력한 후에 조회해 주세요.</td>
-          </tr>
+            <%
+              ArrayList<HistoryDTO> dtos = (ArrayList<HistoryDTO>) request.getAttribute("historyList");
+
+              if (dtos.isEmpty()) {
+                out.print("<td colspan=\"17\">없음</td>");
+              } else {
+                for (int i = 0; i < dtos.size(); i++) {
+                  out.print("<tr>");
+                  out.print("  <td>" + dtos.get(i).getHistory_id() + "</td>");
+                  out.print("  <td>" + dtos.get(i).getLAT() + "</td>");
+                  out.print("  <td>" + dtos.get(i).getLNT() + "</td>");
+                  out.print("  <td>" + dtos.get(i).getSearched_at() + "</td>");
+                  out.print("  <td>");
+                  out.print("    <form method=\"get\" action=\"/delete-history\">");
+                  out.print("      <input type=\"hidden\" id=\"history_id\" name=\"history_id\" value=\"" +
+                          dtos.get(i).getHistory_id() +
+                          "\">");
+                  out.print("      <button type=\"submit\">삭제</button>");
+                  out.print("    </form>");
+                  out.print("</td>");
+                  out.print("</tr>");
+                }
+              }
+            %>
         </tbody>
       </table>
     </main>

@@ -78,7 +78,7 @@ public class PublicWifiDAO {
 
             connection.setAutoCommit(false);
 
-            statement.executeUpdate("drop table public_wifi");
+            statement.executeUpdate("DROP TABLE IF EXISTS public_wifi");
 
         }
         catch(SQLException e)

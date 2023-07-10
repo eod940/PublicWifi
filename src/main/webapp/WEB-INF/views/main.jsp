@@ -17,13 +17,13 @@
     <h1>와이파이 정보 구하기</h1>
     <nav>
       <a href="${pageContext.request.contextPath}/">홈</a> |
-      <a href="#">위치 히스토리 목록</a> |
+      <a href="${pageContext.request.contextPath}/history">위치 히스토리 목록</a> |
       <a href="${pageContext.request.contextPath}/load-wifi">Open API 와이파이 정보 가져오기</a> |
       <a href="#">즐겨찾기 보기</a> |
       <a href="#">즐겨찾기 그룹 관리</a> |
     </nav>
     <div>
-      <form method="get" action="${pageContext.request.contextPath}/dist">
+      <form method="get" action="${pageContext.request.contextPath}/view">
         <label for="lat">LAT:</label>
         <input name="lat" type="text" id="lat" value="0.0">
 
@@ -62,8 +62,6 @@
             <%
               String lat = request.getParameter("lat");
               String lnt = request.getParameter("lnt");
-//              request.setAttribute("lat", lat);
-//              request.setAttribute("lnt", lnt);
 
               if (lat == null | lnt == null) {
                 out.print("<td colspan=\"17\">위치 정보를 입력한 후에 조회해 주세요.</td>");
@@ -90,7 +88,6 @@
                   out.print("  <td>" + wifiDTOS.get(i).getX_SWIFI_CMCWR() + "</td>");
                   out.print("  <td>" + wifiDTOS.get(i).getX_SWIFI_CNSTC_YEAR() + "</td>");
                   out.print("  <td>" + wifiDTOS.get(i).getX_SWIFI_INOUT_DOOR() + "</td>");
-                  out.print("  <td>" + wifiDTOS.get(i).getX_SWIFI_REMARS3() + "</td>");
                   out.print("  <td>" + wifiDTOS.get(i).getX_SWIFI_REMARS3() + "</td>");
                   out.print("  <td>" + wifiDTOS.get(i).getLAT() + "</td>");
                   out.print("  <td>" + wifiDTOS.get(i).getLNT() + "</td>");

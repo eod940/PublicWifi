@@ -1,5 +1,6 @@
-package org.publicwifi.v1.servlet;
+package org.publicwifi.v1.servlet.history;
 
+import org.publicwifi.v1.dao.HistoryDAO;
 import org.publicwifi.v1.dao.PublicWifiDAO;
 
 import javax.servlet.ServletException;
@@ -10,13 +11,13 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.sql.SQLException;
 
-@WebServlet("/create-wifi")
-public class CreateServlet extends HttpServlet {
+@WebServlet("/create-history")
+public class CreateHistoryServlet extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-        PublicWifiDAO publicWifiDAO = new PublicWifiDAO();
+        HistoryDAO dao = new HistoryDAO();
         try {
-            publicWifiDAO.deletePublicWifi();
+            dao.createHistory();
         } catch (ClassNotFoundException | SQLException e) {
             throw new RuntimeException(e);
         }

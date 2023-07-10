@@ -1,4 +1,4 @@
-package org.publicwifi.v1.servlet;
+package org.publicwifi.v1.servlet.wifi;
 
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;

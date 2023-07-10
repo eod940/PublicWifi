@@ -1,4 +1,4 @@
-package org.publicwifi.v1.servlet;
+package org.publicwifi.v1.servlet.wifi;
 
 import org.publicwifi.v1.dao.PublicWifiDAO;
 
@@ -10,17 +10,22 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.sql.SQLException;
 
-@WebServlet("/delete-wifi")
-public class DeleteWifiServlet extends HttpServlet {
+@WebServlet("/drop-wifi")
+public class DropWifiServlet extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-        PublicWifiDAO dao = new PublicWifiDAO();
+        PublicWifiDAO publicWifiDAO = new PublicWifiDAO();
         try {
-            dao.deletePublicWifi();
+            publicWifiDAO.dropPublicWifi();
         } catch (ClassNotFoundException | SQLException e) {
             throw new RuntimeException(e);
         }
-        System.out.println("delete-wifi 작동완료");
+        System.out.println("drop-wifi 작동완료");
         response.sendRedirect("/");
+    }
+
+    @Override
+    protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+
     }
 }

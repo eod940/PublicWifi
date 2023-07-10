@@ -1,6 +1,6 @@
-package org.publicwifi.v1.servlet;
+package org.publicwifi.v1.servlet.history;
 
-import org.publicwifi.v1.dao.PublicWifiDAO;
+import org.publicwifi.v1.dao.HistoryDAO;
 
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
@@ -10,18 +10,21 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.sql.SQLException;
 
-@WebServlet("/drop-wifi")
-public class DropServlet extends HttpServlet {
+@WebServlet("/delete-history")
+public class DeleteHistoryServlet extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-        PublicWifiDAO publicWifiDAO = new PublicWifiDAO();
+        HistoryDAO dao = new HistoryDAO();
+        int history_id = Integer.parseInt(request.getParameter("history_id"));
         try {
-            publicWifiDAO.dropPublicWifi();
+            dao.deleteHistory(history_id);
+            System.out.println("history_id = " + history_id);
         } catch (ClassNotFoundException | SQLException e) {
             throw new RuntimeException(e);
         }
-        System.out.println("drop-wifi 작동완료");
-        response.sendRedirect("/");
+
+        System.out.println("delete-history 작동완료");
+        response.sendRedirect("/history");
     }
 
     @Override

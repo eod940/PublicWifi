@@ -1,24 +1,27 @@
-package org.publicwifi.v1.servlet;
+package org.publicwifi.v1.servlet.wifi;
 
-import javax.servlet.RequestDispatcher;
+import org.publicwifi.v1.dao.PublicWifiDAO;
+
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
+import java.sql.SQLException;
 
-@WebServlet("/test")
-public class TestServlet extends HttpServlet {
+@WebServlet("/create-wifi")
+public class CreateWifiServlet extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-        String viewPath = "/WEB-INF/views/test.jsp";
-        RequestDispatcher dispatcher = request.getRequestDispatcher(viewPath);
-        dispatcher.forward(request, response);
-        System.out.println(request.getMethod());
-        System.out.println(request.getProtocol());
-        String q = request.getQueryString();
-        System.out.println(q);
+        PublicWifiDAO publicWifiDAO = new PublicWifiDAO();
+        try {
+            publicWifiDAO.createPublicWifi();
+        } catch (ClassNotFoundException | SQLException e) {
+            throw new RuntimeException(e);
+        }
+        System.out.println("create-wifi 작동완료");
+        response.sendRedirect("/");
     }
 
     @Override
@@ -26,4 +29,3 @@ public class TestServlet extends HttpServlet {
 
     }
 }
-
