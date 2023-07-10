@@ -78,7 +78,11 @@
                   out.print("  <td>" + dist.getDistance(myLat, myLnt, wifiDTOS.get(i).getLAT(), wifiDTOS.get(i).getLNT()) + "</td>");
                   out.print("  <td>" + wifiDTOS.get(i).getX_SWIFI_MGR_NO() + "</td>");
                   out.print("  <td>" + wifiDTOS.get(i).getX_SWIFI_WRDOFC() + "</td>");
-                  out.print("  <td>" + wifiDTOS.get(i).getX_SWIFI_MAIN_NM() + "</td>");
+                  out.print("  <td>");
+                  out.print("    <a href=\"/detail?mgrNo=" + wifiDTOS.get(i).getX_SWIFI_MGR_NO() + "\">");
+                  out.print(wifiDTOS.get(i).getX_SWIFI_MAIN_NM());
+                  out.print("    </a>");
+                  out.print("  </td>");
                   out.print("  <td>" + wifiDTOS.get(i).getX_SWIFI_ADRES1() + "</td>");
                   out.print("  <td>" + wifiDTOS.get(i).getX_SWIFI_ADRES2() + "</td>");
                   out.print("  <td>" + wifiDTOS.get(i).getX_SWIFI_INSTL_FLOOR() + "</td>");

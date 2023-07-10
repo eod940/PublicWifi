@@ -35,13 +35,10 @@ public class GetWifiServlet extends HttpServlet {
         } catch (ClassNotFoundException | SQLException e) {
             throw new RuntimeException(e);
         }
-        System.out.println("서블릿 정상 작동");  // 로그
-        System.out.println("dbCount: " + dbCount);
 
         // 완료 후 forward
         request.setAttribute("nums", dbCount);
         requestDispatcher.forward(request, response);
-
     }
 
     public static String urlBulid(int startPage, int lastPage){

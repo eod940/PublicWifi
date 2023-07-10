@@ -311,7 +311,8 @@ public class PublicWifiDAO {
         return list;
     }
 
-    public void selectAllPublicWifi() throws ClassNotFoundException, SQLException {
+    public ArrayList<PublicWifiDTO> selectDetailPublicWifi(String id) throws ClassNotFoundException, SQLException {
+        ArrayList<PublicWifiDTO> list = new ArrayList<>();
         Connection connection = null;
         PreparedStatement psmt = null;
         Class.forName("org.sqlite.JDBC");
@@ -320,16 +321,35 @@ public class PublicWifiDAO {
         {
             // create a database connection
             connection = DriverManager.getConnection(dbUrl);
-            String sql = "SELECT * FROM public_wifi LIMIT 20";
+            String sql = "SELECT * FROM public_wifi WHERE X_SWIFI_MGR_NO = ?";
             psmt = connection.prepareStatement(sql);
 
             connection.setAutoCommit(false);
 
+            psmt.setString(1, id);
+
             ResultSet rs = psmt.executeQuery();
-            System.out.println(psmt.isClosed());
 
             while (rs.next()) {
-                System.out.println(rs.getString("X_SWIFI_MGR_NO"));
+                PublicWifiDTO publicWifiDTO = new PublicWifiDTO(
+                    rs.getString("X_SWIFI_MGR_NO"),
+                    rs.getString("X_SWIFI_WRDOFC"),
+                    rs.getString("X_SWIFI_MAIN_NM"),
+                    rs.getString("X_SWIFI_ADRES1"),
+                    rs.getString("X_SWIFI_ADRES2"),
+                    rs.getString("X_SWIFI_INSTL_FLOOR"),
+                    rs.getString("X_SWIFI_INSTL_TY"),
+                    rs.getString("X_SWIFI_INSTL_MBY"),
+                    rs.getString("X_SWIFI_SVC_SE"),
+                    rs.getString("X_SWIFI_CMCWR"),
+                    rs.getString("X_SWIFI_CNSTC_YEAR"),
+                    rs.getString("X_SWIFI_INOUT_DOOR"),
+                    rs.getString("X_SWIFI_REMARS3"),
+                    rs.getDouble("LAT"),
+                    rs.getDouble("LNT"),
+                    rs.getString("WORK_DTTM")
+                );
+                list.add(publicWifiDTO);
             }
 
             connection.commit();
@@ -361,5 +381,6 @@ public class PublicWifiDAO {
                 System.err.println(e.getMessage());
             }
         }
+        return list;
     }
 }
