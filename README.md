@@ -10,10 +10,7 @@
 호출(Open API)을 호출하는 문제 해결 능력을 키우고자 한다.<br>
 
 ## :bulb: Stacks
-<img alt="Static Badge Java8" src="https://img.shields.io/badge/java_8-5382A1?style=for-the-badge&logo=openjdk&logoColor=white">
-<img alt="Static Badge Sqlite" src="https://img.shields.io/badge/SQLite-003B57?style=for-the-badge&logo=SQLite&logoColor=white">
-<img alt="Static Badge Jsp" src="https://img.shields.io/badge/Jsp-F26522?style=for-the-badge&logo=openjdk&logoColor=white">
-<img alt="Static Badge gradle" src="https://img.shields.io/badge/gradle-02303A?style=for-the-badge&logo=gradle">
+<img alt="Static Badge Java8" src="https://img.shields.io/badge/java_8-5382A1?style=for-the-badge&logo=openjdk&logoColor=white"> <img alt="Static Badge Sqlite" src="https://img.shields.io/badge/SQLite-003B57?style=for-the-badge&logo=SQLite&logoColor=white"> <img alt="Static Badge Jsp" src="https://img.shields.io/badge/Jsp-F26522?style=for-the-badge&logo=openjdk&logoColor=white"> <img alt="Static Badge gradle" src="https://img.shields.io/badge/gradle-02303A?style=for-the-badge&logo=gradle">
 
 
 ```
