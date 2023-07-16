@@ -19,7 +19,7 @@ version:
     sqlite 3.40.1
     tomcat 9.0.22
     jsp 2.3
-    gradle 1.0-SNAPSHOT
+    gradle 8.0
 ```
 
 
