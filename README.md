@@ -9,6 +9,8 @@
 본 프로젝트의 목적은 Java와 Web, DB의 개념과 이를 통한 응용을 통하여 Java, JSP, SQLite의 동작을 배우고자 한다. 뿐만 아니라 타 시스템 
 호출(Open API)을 호출하는 문제 해결 능력을 키우고자 한다.<br>
 
+**기간: 23년 6월 21일 ~ 23년 7월 10일
+
 ## :bulb: Stacks
 <img alt="Static Badge Java8" src="https://img.shields.io/badge/java_8-5382A1?style=for-the-badge&logo=openjdk&logoColor=white"> <img alt="Static Badge Sqlite" src="https://img.shields.io/badge/SQLite-003B57?style=for-the-badge&logo=SQLite&logoColor=white"> <img alt="Static Badge Jsp" src="https://img.shields.io/badge/Jsp-F26522?style=for-the-badge&logo=openjdk&logoColor=white"> <img alt="Static Badge gradle" src="https://img.shields.io/badge/gradle-02303A?style=for-the-badge&logo=gradle">
 
